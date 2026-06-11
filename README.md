@@ -17,26 +17,66 @@ Claude Code 的 CLAUDE.md 有两层加载机制：
 
 ### 完整安装
 
-全部 4 个 profile（general + code + research + experiment）合并到一个 CLAUDE.md。
+全部 3 个 profile（general + code + experiment）合并到一个 CLAUDE.md。research 场景的能力由配套 skill 与 plugin 提供，详见下方安装步骤。
 
-#### 安装到全局
+#### 安装到全局 CLAUDE.md
 
 ```bash
 cat ~/claude-code-profiles/general.md \
     ~/claude-code-profiles/code.md \
-    ~/claude-code-profiles/research.md \
     ~/claude-code-profiles/experiment.md \
     >> ~/.claude/CLAUDE.md
 ```
 
-#### 安装到项目
+#### 安装配套 skill 与 plugin
+
+research 场景的能力由两组外部 skill 提供，不通过 CLAUDE.md profile 加载：
+
+| 来源 | 用途 | 安装方式 |
+|---|---|---|
+| [nature-skills](https://github.com/Yuan1z0825/nature-skills) | 学术写作、润色、引用、图表、投稿回复 | Claude Code plugin |
+| [dailypaper-skills](https://github.com/huangkiki/dailypaper-skills) | 每日论文推荐、论文阅读、笔记生成 | 用户 skill 目录 |
+
+**nature-skills（plugin 安装）**
+
+通过 CLI 安装：
 
 ```bash
-cat ~/claude-code-profiles/general.md \
-    ~/claude-code-profiles/code.md \
-    ~/claude-code-profiles/research.md \
-    ~/claude-code-profiles/experiment.md \
-    >> ./CLAUDE.md
+claude plugin marketplace add Yuan1z0825/nature-skills
+claude plugin install nature-skills@nature-skills
+```
+
+**dailypaper-skills（用户 skill 安装）**
+
+```bash
+git clone https://github.com/huangkiki/dailypaper-skills.git /tmp/dailypaper-skills
+mkdir -p ~/.claude/skills
+cp -r /tmp/dailypaper-skills/skills/* ~/.claude/skills/
+
+# 编辑 ~/.claude/skills/_shared/user-config.json，设置：
+#   obsidian_vault: Obsidian vault 路径
+#   keywords: 论文过滤关键词
+
+# 准备 Obsidian 目录
+VAULT=~/ObsidianVault
+mkdir -p "$VAULT/DailyPapers" \
+  "$VAULT/论文笔记/_概念/0-待分类" \
+  "$VAULT/论文笔记/_待整理"
+```
+
+**前置依赖**
+
+```bash
+# 1.
+# macOS
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt install poppler-utils
+
+# 2.
+# Python
+pip install arxiv pyzotero pdfplumber
 ```
 
 ### 部分安装
@@ -49,12 +89,6 @@ cat ~/claude-code-profiles/general.md \
 # 基础用法：general + code（最常用）
 cat ~/claude-code-profiles/general.md \
     ~/claude-code-profiles/code.md \
-    >> ~/.claude/CLAUDE.md
-
-# 基础用法 + 调研
-cat ~/claude-code-profiles/general.md \
-    ~/claude-code-profiles/code.md \
-    ~/claude-code-profiles/research.md \
     >> ~/.claude/CLAUDE.md
 
 # 基础用法 + 实验
@@ -70,11 +104,6 @@ cat ~/claude-code-profiles/general.md \
 # 编码项目
 cat ~/claude-code-profiles/general.md \
     ~/claude-code-profiles/code.md \
-    >> ./CLAUDE.md
-
-# 调研项目
-cat ~/claude-code-profiles/general.md \
-    ~/claude-code-profiles/research.md \
     >> ./CLAUDE.md
 
 # 训练项目
@@ -105,9 +134,16 @@ cat ~/claude-code-profiles/general.md \
 - Surgical Changes（精准修改，不改无关代码）
 - Goal-Driven Execution（目标驱动，可验证结果）
 
-### `research.md` — 科研调研 Agent
+### 科研调研（skill + plugin，无独立 profile）
 
-TBD
+科研场景的能力不由 CLAUDE.md profile 提供，而是通过两组外部 skill 实现（安装步骤见上方[完整安装 → 安装配套 skill 与 plugin](#安装配套-skill-与-plugin)）：
+
+| 来源 | 用途 |
+|---|---|
+| [nature-skills](https://github.com/Yuan1z0825/nature-skills) | 学术写作、润色、引用、图表、投稿回复（9 个 skill） |
+| [dailypaper-skills](https://github.com/huangkiki/dailypaper-skills) | 每日论文推荐、论文阅读、笔记生成（7 个 skill） |
+
+日常使用时，在 Claude Code 会话中直接触发对应的 skill 即可（如「今日论文推荐」、`/nature-polishing` 等）。
 
 ### `experiment.md` — 实验训练 Agent
 
