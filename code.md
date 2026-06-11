@@ -1,9 +1,5 @@
 # CLAUDE.md — 编码 Agent
 
-本文件用于代码编写场景，放到代码项目的 `./CLAUDE.md`（项目级加载，与全局 `general.md` 自动叠加）。
-
----
-
 ## Code Style
 
 - 匹配周边代码的注释密度、命名风格和缩进习惯。
@@ -48,15 +44,9 @@
 
 ---
 
-## Recommended Plugins & Skills
-
-安装以下 plugin/skill 以增强编码场景：
+## Recommended Skills
 
 ```bash
-# 安装 Karpathy 编码指南（精简 diff、减少过度设计）
-/claude plugin marketplace add anthropics/claude-plugins-official
-/claude plugin install andrej-karpathy-skills@karpathy-skills
-
 # 内置 skill（无需安装，直接使用 /code-review、/simplify 等）
 # /code-review  — 代码审查，发现 bug 和冗余
 # /simplify     — 代码精简，消除过度设计
